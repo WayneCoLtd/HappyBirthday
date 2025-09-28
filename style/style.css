@@ -104,9 +104,94 @@ canvas {
 }
 
 .idea-3 strong {
-  padding: 3px 5px;
-  border-radius: 3px;
+  padding: 6px 12px;
+  border-radius: 12px;
   display: inline-block;
+  background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+  color: #fff;
+  font-weight: 600;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 15px rgba(255, 216, 155, 0.4);
+  animation: warm-glow 3s ease-in-out infinite alternate;
+  transition: all 0.3s ease;
+}
+
+@keyframes warm-glow {
+  from {
+    box-shadow: 0 4px 15px rgba(255, 216, 155, 0.4), 0 0 20px rgba(255, 216, 155, 0.2);
+    transform: scale(1);
+  }
+  to {
+    box-shadow: 0 6px 20px rgba(255, 216, 155, 0.6), 0 0 30px rgba(255, 216, 155, 0.4);
+    transform: scale(1.05);
+  }
+}
+
+.highlight {
+  color: #ff69b4;
+  font-weight: bold;
+  text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+  background: linear-gradient(45deg, rgba(255, 105, 180, 0.1), rgba(255, 182, 193, 0.1));
+  padding: 2px 6px;
+  border-radius: 8px;
+  display: inline-block;
+  animation: gentle-glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes gentle-glow {
+  from {
+    text-shadow: 0 0 10px rgba(255, 105, 180, 0.5);
+  }
+  to {
+    text-shadow: 0 0 15px rgba(255, 105, 180, 0.8), 0 0 20px rgba(255, 105, 180, 0.3);
+  }
+}
+
+.warm-love {
+  background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+  display: inline-block;
+  animation: warm-heartbeat 3s ease-in-out infinite;
+  text-shadow: 0 0 20px rgba(255, 154, 158, 0.6);
+  position: relative;
+}
+
+.warm-love::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(45deg, rgba(255, 154, 158, 0.3), rgba(254, 207, 239, 0.3));
+  border-radius: 10px;
+  z-index: -1;
+  animation: warm-glow-bg 4s ease-in-out infinite alternate;
+}
+
+@keyframes warm-heartbeat {
+  0%, 100% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  50% {
+    transform: scale(1.05);
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes warm-glow-bg {
+  from {
+    opacity: 0.3;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
 }
 
 .five .idea-5 {
@@ -131,6 +216,12 @@ canvas {
   display: inline-block;
   max-width: 100%;
   height: auto;
+}
+
+.six .lydia-dp {
+  max-height: 60vh;
+  width: auto;
+  object-fit: contain;
 }
 
 .six .hat {
@@ -223,9 +314,14 @@ canvas {
 }
 
 .wish-hbd {
-  font-size: 3em;
+  font-size: 1.4em;
   margin: 0;
-  text-transform: uppercase;
+  text-transform: none;
+  line-height: 1.6;
+  max-width: 80%;
+  margin: 0 auto;
+  word-wrap: break-word;
+  text-align: center;
 }
 
 .wish h5 {
