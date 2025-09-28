@@ -28,7 +28,10 @@ const fetchData = () => {
             audio = new Audio(audioUrl)
             audio.preload = "auto"
           } else {
-            document.querySelector(`[data-node-name*="${customData}"]`).innerText = data[customData]
+            const element = document.querySelector(`[data-node-name*="${customData}"]`)
+            if (element) {
+              element.innerHTML = data[customData].replace(/\n/g, '<br>')
+            }
           }
         }
 
@@ -56,9 +59,39 @@ const animationTimeline = () => {
     .split("")
     .join("</span><span>")}</span`
 
-  hbd.innerHTML = `<span>${hbd.innerHTML
-    .split("")
-    .join("</span><span>")}</span`
+  // 处理包含HTML标签的wishHeading内容
+  const hbdContent = hbd.innerHTML
+  const parts = hbdContent.split(/<br>/g)
+  let processedContent = ''
+  
+  parts.forEach((part, index) => {
+    if (part.trim()) {
+      // 检查是否包含HTML标签
+      if (part.includes('<span') && part.includes('</span>')) {
+        // 保持HTML标签完整，只对标签外的文字进行字符分割
+        const spanMatch = part.match(/(.*?)(<span[^>]*>.*?<\/span>)(.*)/)
+        if (spanMatch) {
+          const before = spanMatch[1]
+          const spanTag = spanMatch[2]
+          const after = spanMatch[3]
+          
+          let beforeSpans = before ? `<span>${before.split('').join('</span><span>')}</span>` : ''
+          let afterSpans = after ? `<span>${after.split('').join('</span><span>')}</span>` : ''
+          
+          processedContent += beforeSpans + spanTag + afterSpans
+        } else {
+          processedContent += `<span>${part.split('').join('</span><span>')}</span>`
+        }
+      } else {
+        processedContent += `<span>${part.split('').join('</span><span>')}</span>`
+      }
+    }
+    if (index < parts.length - 1) {
+      processedContent += '<br>'
+    }
+  })
+  
+  hbd.innerHTML = processedContent
 
   const ideaTextTrans = {
     opacity: 0,
@@ -77,95 +110,93 @@ const animationTimeline = () => {
   const tl = new TimelineMax()
 
   tl
-    .to(".container", 0.1, {
+    .to(".container", 0.14, {
       visibility: "visible"
     })
-    .from(".one", 0.7, {
+    .from(".one", 0.98, {
       opacity: 0,
       y: 10
     })
-    .from(".two", 0.4, {
+    .from(".two", 0.56, {
       opacity: 0,
       y: 10
     })
     .to(
       ".one",
-      0.7,
+      0.98,
       {
         opacity: 0,
         y: 10
       },
-      "+=2.5"
+      "+=3.5"
     )
     .to(
       ".two",
-      0.7,
+      0.98,
       {
         opacity: 0,
         y: 10
       },
-      "-=1"
+      "-=1.4"
     )
-    .from(".three", 0.7, {
+    .from(".three", 0.98, {
       opacity: 0,
       y: 10
       // scale: 0.7
     })
     .to(
       ".three",
-      0.7,
+      0.98,
       {
         opacity: 0,
         y: 10
       },
-      "+=2"
+      "+=2.8"
     )
-    .from(".four", 0.7, {
+    .from(".four", 0.98, {
       scale: 0.2,
       opacity: 0
     })
-    .from(".fake-btn", 0.3, {
+    .from(".fake-btn", 0.42, {
       scale: 0.2,
       opacity: 0
     })
     .staggerTo(
       ".hbd-chatbox span",
-      0.5,
+      0.7,
       {
         visibility: "visible"
       },
-      0.05
+      0.07
     )
-    .to(".fake-btn", 0.1, {
+    .to(".fake-btn", 0.14, {
       backgroundColor: "#8FE3B6"
     })
     .to(
       ".four",
-      0.5,
+      0.7,
       {
         scale: 0.2,
         opacity: 0,
         y: -150
       },
-      "+=0.7"
+      "+=0.98"
     )
-    .from(".idea-1", 0.7, ideaTextTrans)
-    .to(".idea-1", 0.7, ideaTextTransLeave, "+=1.5")
-    .from(".idea-2", 0.7, ideaTextTrans)
-    .to(".idea-2", 0.7, ideaTextTransLeave, "+=1.5")
-    .from(".idea-3", 0.7, ideaTextTrans)
-    .to(".idea-3 strong", 0.5, {
-      scale: 1.2,
-      x: 10,
-      backgroundColor: "rgb(21, 161, 237)",
-      color: "#fff"
+    .from(".idea-1", 0.98, ideaTextTrans)
+    .to(".idea-1", 0.98, ideaTextTransLeave, "+=2.1")
+    .from(".idea-2", 0.98, ideaTextTrans)
+    .to(".idea-2", 0.98, ideaTextTransLeave, "+=2.1")
+    .from(".idea-3", 0.98, ideaTextTrans)
+    .to(".idea-3 strong", 0.7, {
+      scale: 1.15,
+      x: 8
     })
-    .to(".idea-3", 0.7, ideaTextTransLeave, "+=1.5")
-    .from(".idea-4", 0.7, ideaTextTrans)
-    .to(".idea-4", 0.7, ideaTextTransLeave, "+=1.5")
+    .to(".idea-3", 0.98, ideaTextTransLeave, "+=2.1")
+    .from(".idea-4", 0.98, ideaTextTrans)
+    .to(".idea-4", 0.98, ideaTextTransLeave, "+=2.1")
     .from(
       ".idea-5",
-      0.7,
+      0.98,
       {
         rotationX: 15,
         rotationZ: -10,
@@ -174,52 +205,51 @@ const animationTimeline = () => {
         z: 10,
         opacity: 0
       },
-      "+=0.5"
+      "+=0.7"
     )
     .to(
       ".idea-5 .smiley",
-      0.7,
+      0.98,
       {
-        rotation: 90,
         x: 8
       },
-      "+=0.4"
+      "+=0.56"
     )
     .to(
       ".idea-5",
-      0.7,
+      0.98,
       {
         scale: 0.2,
         opacity: 0
       },
-      "+=2"
+      "+=2.8"
     )
     .staggerFrom(
       ".idea-6 span",
-      0.8,
+      1.12,
       {
         scale: 3,
         opacity: 0,
         rotation: 15,
         ease: Expo.easeOut
       },
-      0.2
+      0.28
     )
     .staggerTo(
       ".idea-6 span",
-      0.8,
+      1.12,
       {
         scale: 3,
         opacity: 0,
         rotation: -15,
         ease: Expo.easeOut
       },
-      0.2,
-      "+=1"
+      0.28,
+      "+=1.4"
     )
     .staggerFromTo(
       ".baloons img",
-      2.5,
+      3.5,
       {
         opacity: 0.9,
         y: 1400
@@ -228,11 +258,11 @@ const animationTimeline = () => {
         opacity: 1,
         y: -1000
       },
-      0.2
+      0.28
     )
     .from(
       ".lydia-dp",
-      0.5,
+      0.7,
       {
         scale: 3.5,
         opacity: 0,
@@ -240,9 +270,9 @@ const animationTimeline = () => {
         y: -25,
         rotationZ: -45
       },
-      "-=2"
+      "-=2.8"
     )
-    .from(".hat", 0.5, {
+    .from(".hat", 0.7, {
       x: -100,
       y: 350,
       rotation: -180,
@@ -250,36 +280,31 @@ const animationTimeline = () => {
     })
     .staggerFrom(
       ".wish-hbd span",
-      0.7,
+      0.98,
       {
         opacity: 0,
-        y: -50,
-        // scale: 0.3,
-        rotation: 150,
-        skewX: "30deg",
+        y: -20,
         ease: Elastic.easeOut.config(1, 0.5)
       },
-      0.1
+      0.14
     )
     .staggerFromTo(
       ".wish-hbd span",
-      0.7,
+      0.98,
       {
-        scale: 1.4,
-        rotationY: 150
+        scale: 1
       },
       {
         scale: 1,
-        rotationY: 0,
         color: "#ff69b4",
         ease: Expo.easeOut
       },
-      0.1,
+      0.14,
       "party"
     )
     .from(
       ".wish h5",
-      0.5,
+      0.7,
       {
         opacity: 0,
         y: 10,
@@ -289,30 +314,23 @@ const animationTimeline = () => {
     )
     .staggerTo(
       ".eight svg",
-      1.5,
+      2.1,
       {
         visibility: "visible",
         opacity: 0,
         scale: 80,
         repeat: 3,
-        repeatDelay: 1.4
+        repeatDelay: 1.96
       },
-      0.3
+      0.42
     )
-    .to(".six", 0.5, {
+    .to(".six", 0.7, {
       opacity: 0,
       y: 30,
       zIndex: "-1"
     })
-    .staggerFrom(".nine p", 1, ideaTextTrans, 1.2)
-    .to(
-      ".last-smile",
-      0.5,
-      {
-        rotation: 90
-      },
-      "+=1"
-    )
+    .staggerFrom(".nine p", 1.4, ideaTextTrans, 1.68)
+
 
   // tl.seek("currentStep");
   // tl.timeScale(2);
