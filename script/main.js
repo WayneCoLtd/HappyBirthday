@@ -59,36 +59,14 @@ const animationTimeline = () => {
     .split("")
     .join("</span><span>")}</span`
 
-  // 处理包含HTML标签的wishHeading内容
+  // 处理wishHeading内容，按句子分组而不是按字符
   const hbdContent = hbd.innerHTML
-  const parts = hbdContent.split(/<br>/g)
-  let processedContent = ''
+  const sentences = hbdContent.split(/<br>/g).filter(sentence => sentence.trim())
   
-  parts.forEach((part, index) => {
-    if (part.trim()) {
-      // 检查是否包含HTML标签
-      if (part.includes('<span') && part.includes('</span>')) {
-        // 保持HTML标签完整，只对标签外的文字进行字符分割
-        const spanMatch = part.match(/(.*?)(<span[^>]*>.*?<\/span>)(.*)/)
-        if (spanMatch) {
-          const before = spanMatch[1]
-          const spanTag = spanMatch[2]
-          const after = spanMatch[3]
-          
-          let beforeSpans = before ? `<span>${before.split('').join('</span><span>')}</span>` : ''
-          let afterSpans = after ? `<span>${after.split('').join('</span><span>')}</span>` : ''
-          
-          processedContent += beforeSpans + spanTag + afterSpans
-        } else {
-          processedContent += `<span>${part.split('').join('</span><span>')}</span>`
-        }
-      } else {
-        processedContent += `<span>${part.split('').join('</span><span>')}</span>`
-      }
-    }
-    if (index < parts.length - 1) {
-      processedContent += '<br>'
-    }
+  // 将每个句子包装在一个div中，用于句子级别的动画
+  let processedContent = ''
+  sentences.forEach((sentence, index) => {
+    processedContent += `<div class="sentence" data-sentence="${index}" style="display: none;">${sentence}</div>`
   })
   
   hbd.innerHTML = processedContent
@@ -278,30 +256,52 @@ const animationTimeline = () => {
       rotation: -180,
       opacity: 0
     })
-    .staggerFrom(
-      ".wish-hbd span",
-      0.98,
-      {
-        opacity: 0,
-        y: -20,
-        ease: Elastic.easeOut.config(1, 0.5)
-      },
-      0.14
-    )
-    .staggerFromTo(
-      ".wish-hbd span",
-      0.98,
-      {
-        scale: 1
-      },
-      {
-        scale: 1,
-        color: "#ff69b4",
-        ease: Expo.easeOut
-      },
-      0.14,
-      "party"
-    )
+    .call(() => {
+      // 创建句子循环动画
+      const sentences = document.querySelectorAll('.wish-hbd .sentence')
+      if (sentences.length > 0) {
+        let currentSentence = 0
+        
+        const showNextSentence = () => {
+          // 隐藏所有句子
+          sentences.forEach(s => {
+            s.style.display = 'none'
+            s.style.opacity = '0'
+          })
+          
+          // 显示当前句子
+          const current = sentences[currentSentence]
+          current.style.display = 'block'
+          
+          // 淡入动画
+          TweenMax.fromTo(current, 0.8, 
+            { opacity: 0, y: -20 },
+            { 
+              opacity: 1, 
+              y: 0,
+              ease: Power2.easeOut,
+              onComplete: () => {
+                // 停留2秒后淡出
+                TweenMax.to(current, 0.6, {
+                  opacity: 0,
+                  y: 20,
+                  delay: 2,
+                  ease: Power2.easeIn,
+                  onComplete: () => {
+                    currentSentence = (currentSentence + 1) % sentences.length
+                    // 延迟0.5秒后显示下一句
+                    setTimeout(showNextSentence, 500)
+                  }
+                })
+              }
+            }
+          )
+        }
+        
+        // 开始句子循环
+        showNextSentence()
+      }
+    })
     .from(
       ".wish h5",
       0.7,
