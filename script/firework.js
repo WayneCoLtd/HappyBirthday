@@ -1,4 +1,4 @@
-        const canvas = document.getElementById('fireworksCanvas');
+const canvas = document.getElementById('fireworksCanvas');
         const ctx = canvas.getContext('2d');
         let fireworks = [];
 
@@ -92,6 +92,11 @@
 
         // 监听点击事件
         document.addEventListener('click', (e) => {
+            // 检查动画是否已完成，如果完成则不再创建烟花
+            if (window.animationCompleted) {
+                return;
+            }
+            
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
