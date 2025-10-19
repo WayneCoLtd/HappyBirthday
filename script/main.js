@@ -1,6 +1,7 @@
 let audioUrl = ""
 let audio = null
 let isPlaying = false
+let animationCompleted = false
 
 // Import the data to customize and insert them into page
 const fetchData = () => {
@@ -288,9 +289,11 @@ const animationTimeline = () => {
                   delay: 2,
                   ease: Power2.easeIn,
                   onComplete: () => {
-                    currentSentence = (currentSentence + 1) % sentences.length
-                    // 延迟0.5秒后显示下一句
-                    setTimeout(showNextSentence, 500)
+                    currentSentence = currentSentence + 1
+                    // 如果还有下一句，延迟0.5秒后显示下一句
+                    if (currentSentence < sentences.length) {
+                      setTimeout(showNextSentence, 500)
+                    }
                   }
                 })
               }
@@ -330,6 +333,11 @@ const animationTimeline = () => {
       zIndex: "-1"
     })
     .staggerFrom(".nine p", 1.4, ideaTextTrans, 1.68)
+    .call(() => {
+      // 动画完成，设置标志位
+      animationCompleted = true
+      window.animationCompleted = true // 设置全局变量供烟花脚本使用
+    })
 
 
   // tl.seek("currentStep");
@@ -338,8 +346,10 @@ const animationTimeline = () => {
   // Restart Animation on click
   const replyBtn = document.getElementById("replay")
   replyBtn.addEventListener("click", () => {
-    tl.restart()
-
+    if (!animationCompleted) {
+      tl.restart()
+      animationCompleted = false
+    }
   })
 }
 
